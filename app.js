@@ -1,19 +1,28 @@
 const socket = new WebSocket("ws://172.16.101.78:8080");
 
-const circle = document.getElementById("circle");
-if (!circle) {
-  console.error("Circle element not found");
+const circle1 = document.getElementById("circle1");
+const circle2 = document.getElementById("circle2");
+
+if (!circle1) {
+  console.error("Circle1 element not found");
 }
+if (!circle2) {
+  console.error("Circle2 element not found");
+}
+
 const maxX = window.innerWidth - 50;
 const maxY = window.innerHeight - 50;
 
-let x = maxX / 2;
-let y = maxY / 2;
+let x1 = maxX / 2;
+let y1 = maxY / 2;
+let x2 = maxX / 2;
+let y2 = maxY / 2;
 
-let initialAlpha = null;
-let initialBeta = null;
+let initialAlpha1 = null;
+let initialBeta1 = null;
+let initialAlpha2 = null;
+let initialBeta2 = null;
 
-// threshold is the gap to check slowdown so the pointer doesn't drift off
 const threshold = 0.35;
 
 socket.onopen = () => {
@@ -23,68 +32,81 @@ socket.onopen = () => {
 socket.onmessage = (event) => {
   try {
     const data = event.data;
-    //console.log('Data received:', data);
     const parsedData = JSON.parse(data);
-    //console.log('Parsed data:', parsedData);
 
-    // Check for reset gyro command incoming from phone.html
-    if (parsedData.command === "reset") {
-      // Reset circle position to center
-      x = maxX / 2;
-      y = maxY / 2;
-
-      // Reinitialize initialAlpha and initialBeta
-      initialAlpha = null;
-      initialBeta = null;
-
-      // Update the circle's position
-      circle.style.left = `${x}px`;
-      circle.style.top = `${y}px`;
-      console.log("Circle reset to center");
-
-      return; // Exit the handler after reset
+    if (parsedData.command === "reset1") {
+      x1 = maxX / 2;
+      y1 = maxY / 2;
+      initialAlpha1 = null;
+      initialBeta1 = null;
+      circle1.style.left = `${x1}px`;
+      circle1.style.top = `${y1}px`;
+      console.log("Circle1 reset to center");
+      return;
     }
 
-    const alpha = parsedData.alpha;
-    const beta = parsedData.beta;
-    const gamma = parsedData.gamma;
-
-    const xAccel = parsedData.x;
-    const yAccel = parsedData.y;
-    const zAccel = parsedData.z;
-
-    // Capture initial values for calibration
-    if (initialAlpha === null || initialBeta === null) {
-      initialAlpha = alpha;
-      initialBeta = beta;
+    if (parsedData.command === "reset2") {
+      x2 = maxX / 2;
+      y2 = maxY / 2;
+      initialAlpha2 = null;
+      initialBeta2 = null;
+      circle2.style.left = `${x2}px`;
+      circle2.style.top = `${y2}px`;
+      console.log("Circle2 reset to center");
+      return;
     }
 
-    // Adjust alpha and beta based on initial values
-    const adjustedAlpha = alpha - initialAlpha;
-    const adjustedBeta = beta - initialBeta;
+    const { player, alpha, beta } = parsedData;
 
-    // The value to multiply the movement speed by
-    const sensitivity = 0.75; // Increased for testing
+    if (player === 1) {
+      if (initialAlpha1 === null || initialBeta1 === null) {
+        initialAlpha1 = alpha;
+        initialBeta1 = beta;
+      }
 
-    // Update the position based on orientation data if they are above the threshold
-    if (Math.abs(adjustedAlpha) > threshold) {
-      x -= adjustedAlpha * sensitivity;
+      const adjustedAlpha = alpha - initialAlpha1;
+      const adjustedBeta = beta - initialBeta1;
+
+      const sensitivity = 0.75;
+
+      if (Math.abs(adjustedAlpha) > threshold) {
+        x1 -= adjustedAlpha * sensitivity;
+      }
+
+      if (Math.abs(adjustedBeta) > threshold) {
+        y1 -= adjustedBeta * sensitivity;
+      }
+
+      x1 = Math.max(0, Math.min(x1, maxX));
+      y1 = Math.max(0, Math.min(y1, maxY));
+
+      circle1.style.left = `${x1}px`;
+      circle1.style.top = `${y1}px`;
+    } else if (player === 2) {
+      if (initialAlpha2 === null || initialBeta2 === null) {
+        initialAlpha2 = alpha;
+        initialBeta2 = beta;
+      }
+
+      const adjustedAlpha = alpha - initialAlpha2;
+      const adjustedBeta = beta - initialBeta2;
+
+      const sensitivity = 0.75;
+
+      if (Math.abs(adjustedAlpha) > threshold) {
+        x2 -= adjustedAlpha * sensitivity;
+      }
+
+      if (Math.abs(adjustedBeta) > threshold) {
+        y2 -= adjustedBeta * sensitivity;
+      }
+
+      x2 = Math.max(0, Math.min(x2, maxX));
+      y2 = Math.max(0, Math.min(y2, maxY));
+
+      circle2.style.left = `${x2}px`;
+      circle2.style.top = `${y2}px`;
     }
-
-    if (Math.abs(adjustedBeta) > threshold) {
-      y -= adjustedBeta * sensitivity;
-    }
-
-    // Keep the circle within the window boundaries
-    x = Math.max(0, Math.min(x, maxX));
-    y = Math.max(0, Math.min(y, maxY));
-
-    //console.log('New position from data:', { x, y });
-
-    // Update the circle's position
-    circle.style.left = `${x}px`;
-    circle.style.top = `${y}px`;
-    //console.log('Circle position updated:', { left: circle.style.left, top: circle.style.top });
   } catch (error) {
     console.error("Error handling message:", error);
   }
