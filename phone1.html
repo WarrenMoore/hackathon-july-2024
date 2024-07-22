@@ -15,13 +15,16 @@
 
     <script src="gyro.js"></script>
     <script>
-      const socket = new WebSocket("ws://172.16.101.78:8080");
+      const socket = new WebSocket(
+        "wss://warren-office.local.fxdigital.uk:8080"
+      );
 
       socket.onopen = () => {
         console.log("WebSocket connection established");
         socket.send(JSON.stringify({ command: "phoneConnected" }));
 
         gyro.startTracking(function (o) {
+          console.warn(o);
           const data = {
             player: 1,
             x: o.x,
@@ -35,7 +38,7 @@
         });
       };
 
-      window.addEventListener("deviceorientation", (event) => {
+      const handler = (event) => {
         const output = document.getElementById("output");
         const data = `Alpha: ${event.alpha.toFixed(
           2
@@ -43,9 +46,18 @@
           2
         )}`;
         output.innerHTML = data;
-      });
+      };
+
+      window.addEventListener("deviceorientation", handler);
 
       document.getElementById("resetButton").addEventListener("click", () => {
+        if (typeof DeviceMotionEvent.requestPermission === "function") {
+          DeviceMotionEvent.requestPermission().then(() => {
+            window.removeEventListener("deviceorientation", handler);
+            window.addEventListener("deviceorientation", handler);
+          });
+        }
+
         socket.send(JSON.stringify({ command: "reset1" }));
       });
     </script>

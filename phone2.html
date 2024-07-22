@@ -15,7 +15,9 @@
 
     <script src="gyro.js"></script>
     <script>
-      const socket = new WebSocket("ws://172.16.101.78:8080");
+      const socket = new WebSocket(
+        "wss://warren-office.local.fxdigital.uk:8080"
+      );
 
       socket.onopen = () => {
         console.log("WebSocket connection established");

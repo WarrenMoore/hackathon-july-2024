@@ -25,13 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   console.log("Creating QR Codes...");
   const qrCode1 = new QRCode(qrCodeContainer, {
-    text: "http://172.16.101.78:8081/phone1.html",
+    text: "https://warren-office.local.fxdigital.uk:8081/phone1.html",
     width: 400,
     height: 400,
   });
 
   const qrCode2 = new QRCode(qrCodeContainer2, {
-    text: "http://172.16.101.78:8081/phone2.html",
+    text: "https://warren-office.local.fxdigital.uk:8081/phone2.html",
     width: 400,
     height: 400,
   });
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
   circle2.style.display = "none";
   qrCodeContainer2.style.display = "none";
 
-  const socket = new WebSocket("ws://172.16.101.78:8080");
+  const socket = new WebSocket("wss://warren-office.local.fxdigital.uk:8080");
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
