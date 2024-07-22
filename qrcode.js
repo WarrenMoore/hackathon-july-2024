@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   socket.onmessage = (event) => {
-    console.log("Message received from server:", event.data);
+    //console.log("Message received from server:", event.data);
 
     try {
       const message = JSON.parse(event.data);

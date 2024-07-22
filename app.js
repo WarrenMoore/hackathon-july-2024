@@ -13,9 +13,9 @@ if (!circle2) {
 const maxX = window.innerWidth - 50;
 const maxY = window.innerHeight - 50;
 
-let x1 = maxX / 2;
+let x1 = maxX / 4;
 let y1 = maxY / 2;
-let x2 = maxX / 2;
+let x2 = maxX / 4;
 let y2 = maxY / 2;
 
 let initialAlpha1 = null;
@@ -35,7 +35,7 @@ socket.onmessage = (event) => {
     const parsedData = JSON.parse(data);
 
     if (parsedData.command === "reset1") {
-      x1 = maxX / 2;
+      x1 = maxX / 4;
       y1 = maxY / 2;
       initialAlpha1 = null;
       initialBeta1 = null;
@@ -46,7 +46,7 @@ socket.onmessage = (event) => {
     }
 
     if (parsedData.command === "reset2") {
-      x2 = maxX / 2;
+      x2 = maxX / 4;
       y2 = maxY / 2;
       initialAlpha2 = null;
       initialBeta2 = null;
@@ -69,15 +69,15 @@ socket.onmessage = (event) => {
 
       const sensitivity = 0.75;
 
-      if (Math.abs(adjustedAlpha) > threshold) {
-        x1 -= adjustedAlpha * sensitivity;
-      }
+      // if (Math.abs(adjustedAlpha) > threshold) {
+      //   x1 -= adjustedAlpha * sensitivity;
+      // }
 
       if (Math.abs(adjustedBeta) > threshold) {
         y1 -= adjustedBeta * sensitivity;
       }
 
-      x1 = Math.max(0, Math.min(x1, maxX));
+      // x1 = Math.max(0, Math.min(x1, maxX));
       y1 = Math.max(0, Math.min(y1, maxY));
 
       circle1.style.left = `${x1}px`;
@@ -93,9 +93,9 @@ socket.onmessage = (event) => {
 
       const sensitivity = 0.75;
 
-      if (Math.abs(adjustedAlpha) > threshold) {
-        x2 -= adjustedAlpha * sensitivity;
-      }
+      // if (Math.abs(adjustedAlpha) > threshold) {
+      //   x2 -= adjustedAlpha * sensitivity;
+      // }
 
       if (Math.abs(adjustedBeta) > threshold) {
         y2 -= adjustedBeta * sensitivity;
