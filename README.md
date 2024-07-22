@@ -1,7 +1,9 @@
 # gyro-phone
+
 A web app to control a object using your phone's device gyro/orientation. Connects via websocket and utilises gyro.js library from https://github.com/tomgco/gyro.js
 
 # How to run
+
 Ensure you have node installed and http-server (can be installed by running `npm install -g http-server`
 
 Update the websocket address to point to your ip address in `app.js`. Also update the websocket address in phone.html. You might also want to update the console.log in `server.js` to match your ip address
